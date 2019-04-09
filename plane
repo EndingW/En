@@ -1,0 +1,737 @@
+<html>
+<head>
+    <title>飞机大战</title> 
+    <meta charset="UTF-8">
+    <script src="jquery-3.3.1.min.js" type="text/javascript"></script>
+    <style>
+		*{
+		    margin: 0px;
+		    padding: 0px;		
+		    /*无法选择图片*/
+		    -moz-user-select: none; 
+		    -webkit-user-select: none; 
+		    -ms-user-select: none; 
+		    -khtml-user-select: none; 
+		    user-select: none;
+		}
+		/*********************container*****************/
+		#container{
+		    height: 630px;
+		    width: 1024px;
+		    margin-left: 150px;
+		    border: 1px solid black;
+		    background: url("img/background.jpg");
+		}
+		/*******************tab栏设置********************/
+		#tab{
+		    height: 30px;
+		    width: 400px;
+		    margin: 70px 0 0 290px;
+		    position: absolute;
+		    background: black;
+		    opacity: .7;
+		}
+		#tab_time{
+		    float: left;
+		    margin-left: 4px;
+		    border-right: 1px solid white;
+		}
+		#tab_score{
+		    border-right: 1px solid white;
+		    float: left;
+		}
+		#tab_life{
+		    border-right: 1px solid white;
+		    float: left;
+		}
+		#tab_sound{
+		    float: left;
+		}
+		.tabStyle{
+		    width: 95px;
+		    height: 30px;
+		    font-size: 14px;
+		    color: white;
+		}
+		.tabStyle p{
+		    margin: 5px 0 0 5px;
+		    font-size: 15px;
+		}
+		.lifeStyle{
+		    width: 20px;
+		    height: 20px;
+		    position: absolute;
+		    float: left;
+		}
+		#life1{
+		    margin: 5px 0 0 -50px;
+		}
+		#life2{
+		    margin: 5px 0 0 -25px;
+		}
+		#sound1{
+		    width: 20px;
+		    height: 20px;
+		    margin: 5px 0 0 -25px;
+		    position: absolute;
+		    float: left;
+		}
+		#sound2{
+		    width: 20px;
+		    height: 20px;
+		    margin: 5px 0 0 -25px;
+		    position: absolute;
+		    float: left;
+		    display: none;
+		}
+		/*****************************game页面设置**********************/
+		#game{
+		    height: 500px;
+		    width: 300px;
+		    margin: 100px 0 0 340px;
+		    background: url("img/game_bg.png");
+		}
+		#plane{
+		    width: 50px;
+		    height: 40px;
+		    margin-left: 125px;
+		    margin-top: 460px;
+		    position: absolute;
+		}
+		.bullet{
+		    height: 20px;
+		    width: 4px;
+		    position: absolute;
+		}
+		.ePlane{
+		    width: 50px;
+		    height: 40px;
+		    position: absolute;
+		    opacity: .9;
+		}
+		.icon{
+		    width: 40px;
+		    height: 40px;
+		    position: absolute;
+		}
+		
+		
+		
+		
+      
+        #startdiv button {
+            position: absolute;
+            top: 500px;
+            left: 570px;
+            width: 150px;
+            height: 30px;
+            border: 1px solid black;
+            border-radius: 30px;
+            background-color: #c4c9ca;
+        }
+ 
+        #scorediv {
+            font-size: 16px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: none;
+        }
+ 
+        #scorediv {
+            font-size: 18px;
+            font-weight: bold;
+        }
+ 
+        #suspenddiv {
+            position: absolute;
+            top: 210px;
+            left: 82px;
+            display: none;
+            z-index: 2;
+        }
+ 
+        #suspenddiv button {
+            width: 150px;
+            height: 30px;
+            margin-bottom: 20px;
+            border: 1px solid black;
+            border-radius: 30px;
+            background-color: #c4c9ca;
+        }
+ 
+        #enddiv {
+            position: absolute;
+            top: 210px;
+            left: 75px;
+            border: 1px solid gray;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #d7ddde;
+            display: none;
+            z-index: 2;
+        }
+ 
+        .plantext {
+            width: 160px;
+            height: 30px;
+            line-height: 30px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+ 
+        #planscore {
+            width: 160px;
+            height: 80px;
+            line-height: 80px;
+            border-top: 1px solid gray;
+            border-bottom: 1px solid gray;
+            font-size: 16px;
+            font-weight: bold;
+        }
+ 
+        #enddiv div {
+            width: 160px;
+            height: 50px;
+        }
+ 
+        #enddiv div button {
+            margin-top: 10px;
+            width: 90px;
+            height: 30px;
+            border: 1px solid gray;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body >
+    <div id="container">
+        <audio src="css/music/firstDesk.mp3" id="firstDesk" class="audio" autoplay="autoplay" loop="loop"></audio>
+        <div id="tab">
+            <div id="tab_time" class="tabStyle"><p><span></span></p></div>
+            <div id="tab_score" class="tabStyle"><p><span></span></p></div>
+            <div id="tab_life" class="tabStyle"><p><span></span></p></div>
+            <img src="css/img/life1.png" id="life1" class="lifeStyle">
+            <img src="css/img/life1.png" id="life2" class="lifeStyle">
+            <div id="tab_sound" class="tabStyle"><p><span></span></p></div>
+            <img src="css/img/sound1.png" id="sound1" class="soundStyle">
+            <img src="css/img/sound2.png" id="sound2" class="soundStyle">
+        </div>
+             
+        <div id="startdiv">
+            <button onclick="begin()">开始游戏</button>
+        </div>
+        <div id="maindiv">
+            <div id="scorediv">
+                <label>分数：</label>
+                <label id="label">0</label>
+            </div>
+            <div id="suspenddiv">
+                <button>继续</button><br />
+                <button>重新开始</button><br />
+                <button>回到主页</button>
+            </div>
+            <div id="enddiv">
+                <p class="plantext">飞机大战分数</p>
+                <p id="planscore">0</p>
+                <div><button onclick="jixu()">继续</button></div>
+            </div>
+        </div>
+    
+        <div id="game">
+            <img id="plane" src="css/img/plane.png"/>
+        </div>
+    </div>
+</body>
+
+<script  type="text/javascript">
+
+	
+		/*开始游戏按钮点击事件*/
+        var set;
+        function begin() {
+            startdiv.style.display = "none";
+            mainDiv.style.display = "block";
+            selfplan.imagenode.style.display = "block";
+            scorediv.style.display = "block";
+        /*调用开始函数*/
+            set = setInterval(start, 20);
+        }
+        //游戏结束后点击继续按钮事件
+        function jixu() {
+            location.reload(true);
+        }
+        
+        
+        
+/*tab栏设置：时间、分数、生命、声音控制*****************************/
+    //时间
+	    var minute=0,second=0;
+	    function timedCount()
+	    {
+	        if(second==60) {second=0;minute++;}
+	        second++;
+	        $("span")[0].innerHTML="时间 "+(minute>9?minute:"0"+minute)+":"+(second>9?second:"0"+second);
+	        setTimeout("timedCount()",1000); 
+	    }
+	    timedCount();
+	    //分数
+	    var score=0;
+	    $("span")[1].innerHTML="score "+score;
+	    //生命
+	    var life=3;
+	    $("span")[2].innerHTML="生命 ";
+	    //声音设置
+	    $("span")[3].innerHTML="声音";
+	    var audio_key=1;                                //播放bgm的flag
+	    var audio = document.getElementById('firstDesk');
+	    $(".soundStyle").click(function(){
+	            $("#sound1").toggle();
+	            $("#sound2").toggle();
+	            if(audio_key) 
+	                {audio.pause();audio_key=0;}
+	            else 
+	                {audio.play();audio_key=1;}
+	    });
+
+/*
+    飞机飞行速度：85行
+    子弹发射时间间隔 ：181行
+    子弹移动速度：162行
+    敌机生成时间间隔：313行
+ */
+/*********************便捷函数*******************************/
+	/*我方战机发射子弹是否消灭敌方战机*/
+    function getRandom(min,max){//获取在区间[min.max]内的int数
+        var s;
+        s=parseInt(Math.random()*max+1);
+        while(s<min)
+        {
+        	s=parseInt(Math.random()*max+1);
+        }
+        return s;
+    }
+    function isInIt(b1,b2,e1,e2,e3,e4){
+        var k=-3;//设置k值，使得子弹陷入敌机才会消失
+        if(b1<e3-k&&b1>e1+k&&b2>e2+k&&b2<e4-k)
+        {return 1;}
+        else {return 0;}
+      }
+    /*两方飞机相撞*/
+    function isFourInIt(b1,b2,b3,b4,e1,e2,e3,e4){//判断是否重叠，即相撞
+        if(isInIt(b1,b2,e1,e2,e3,e4)||isInIt(b1,b4,e1,e2,e3,e4)||isInIt(b3,b2,e1,e2,e3,e4)||isInIt(b3,b4,e1,e2,e3,e4))
+        	{
+        		return 1;
+        	}
+        else return 0;
+    }
+    function shansuo(i){//飞机闪烁多少秒
+        var i1=0;
+        plane.fadeTo(200,0.1);
+        plane.fadeTo(200,1);
+        i1+=1;
+        if(i1<=i*2)
+        setTimeout("shansuo()",500);
+      }
+
+/***飞机移动速度、移动动作、飞行区域********************************/
+    var plane=$("#plane");
+    var planex=125;
+    var planey=460;
+    var planev=3;//飞机速度
+    $(document).keydown(function(event){
+        if(event.which==37&&planex>=0){
+            planex-=planev;
+            plane.attr('src','css/img/planeLeft.png');
+            plane.css("margin-left",planex);
+        }
+        if(event.which==39&&planex<=250){
+            planex+=planev;
+            plane.attr('src','css/img/planeRight.png');
+            plane.css("margin-left",planex);
+        }
+        if(event.which==38&&planey>=50){//50px用来创建敌机
+            planey-=planev;
+            plane.css("margin-top",planey);
+        }
+        if(event.which==40&&planey<=460){
+            planey+=planev;
+            plane.css("margin-top",planey);
+        }
+    });
+    $(document).keyup(function(event){
+        plane.attr('src','css/img/plane.png');
+    });
+    
+/********子弹类：可升级、路线、随飞机位置生成*******************************************/
+
+    function Bullet(){
+        var that=this;
+        var bulletx =planex+23;
+        var bullety =planey-20;
+        var img=$(new Image());
+      
+        this.createBullet=function(){
+            img.attr({
+                'src':'image/bullet1.png',
+                'class':'bullet'
+            });
+            img.css({
+                'margin-left':bulletx+'px',
+                'margin-top':bullety+'px',
+            });
+            
+            $("#game").append(img);
+            this.bulletMove();
+        }
+        /*升级子弹*/
+        this.bulletUp1=function(){
+            img.attr({
+                'src':'css/img/bullet3x.png',
+                'class':'bullet'
+            });
+            img.css({
+                'margin-left':bulletx-2+'px',
+                'margin-top':bullety+'px',
+                'width':'9px'
+            });
+            
+            $("#game").append(img);
+            this.bulletMove();
+        }
+        this.bulletUp2=function(){
+            img.attr({
+                'src':'css/img/bullet3xx.png',
+                'class':'bullet'
+            });
+            img.css({
+                'margin-left':bulletx-5+'px',
+                'margin-top':bullety+'px',
+                'width':'14px'
+            });
+            
+            $("#game").append(img);
+            this.bulletMove();
+        }
+        //子弹移动轨迹
+        this.bulletMove=function(){
+            if(bullety>0) {
+            img.css('margin-top',bullety+'px');
+            bullety=bullety-3;
+            setTimeout(that.bulletMove,20);
+            }
+            else {
+                img.css('display','none');
+                img.remove();
+            }
+        }
+    }
+    var bullet_grade=1;
+    function myBullet(){
+	    var bu=new Bullet();
+	    if(bullet_grade==1)
+	   		bu.createBullet();
+	    else if(bullet_grade==2)
+	   		bu.bulletUp1();
+	    else if(bullet_grade==3)
+	    	bu.bulletUp2();
+	    	setTimeout("myBullet()",300);
+	    }
+    myBullet();
+    
+/********敌机：机型、路线、子弹、机组*******************************************/
+    function ePlane(){
+        var that=this;
+        var ePlanex =0;
+        var ePlaney =0;
+        var l_or_r=1;//之字形左右flag
+        var degree=0;
+        var img=$(new Image());
+        this.createePlane1=function(){//飞机1、水平飞行、y随机
+            ePlaney=getRandom(1,50);//y随机
+            img.attr({
+                'src':'css/img/ePlane1.png',
+                'class':'ePlane'
+            });
+            img.css({
+                'margin-left':ePlanex+'px',
+                'margin-top':ePlaney+'px'
+            });
+            
+            $("#game").append(img);
+            this.ePlaneRoute1();
+        }
+        this.ePlaneRoute1=function(){//飞机1的轨迹
+            if(ePlanex<=250) {
+            img.css('margin-left',ePlanex+'px');
+            ePlanex+=1;
+            setTimeout(that.ePlaneRoute1,25);
+            }
+            else {
+                img.css('display','none');
+                img.remove();
+            }
+        }
+
+        this.createePlane2=function(){//飞机2,3,4、竖直飞行,z字形飞行、x随机
+            ePlanex=getRandom(1,250);//x随机
+            img.attr({
+                'src':'css/img/ePlane'+getRandom(2,4)+'.png',
+                'class':'ePlane'
+            });
+            img.css({
+                'margin-left':ePlanex+'px',
+                'margin-top':ePlaney+'px'
+            });
+            
+            $("#game").append(img);
+            if(getRandom(1,2)%2)
+            {
+            this.ePlaneRoute2_1();
+            }
+            else this.ePlaneRoute2_2();
+        }
+        this.ePlaneRoute2_1=function(){//飞机2,3,4的轨迹 竖直
+            if(ePlaney<=460) {
+            img.css('margin-top',ePlaney+'px');
+            ePlaney+=1;
+            setTimeout(that.ePlaneRoute2_1,25);
+            }
+            else {
+                img.css('display','none');
+                img.remove();
+            }
+        }
+        this.ePlaneRoute2_2=function(){//飞机2,3,4的轨迹 之字形
+            if(ePlaney<=460) {
+            img.css('margin-top',ePlaney+'px');
+            img.css('margin-left',ePlanex+'px');
+            ePlaney+=1;
+            if(l_or_r%2){
+                ePlanex+=2;
+                if(ePlanex>=250) l_or_r=2;
+            }
+            else {
+                ePlanex-=2;
+                if(ePlanex<=0) l_or_r=1;
+            }
+            setTimeout(that.ePlaneRoute2_2,25);
+            }
+            else {
+                img.css('display','none');
+                img.remove();
+            }
+        }
+
+
+        this.createePlane3=function(){//飞机6、右半圆飞行、
+            ePlaney=50;
+            img.attr({
+                'src':'css/img/ePlane6.png',
+                'class':'ePlane'
+            });
+            img.css({
+                'margin-left':ePlanex+'px',
+                'margin-top':ePlaney+'px'
+            });
+            
+            $("#game").append(img);
+            this.ePlaneRoute3();
+        }
+        this.ePlaneRoute3=function(){//飞机6的轨迹
+            if(degree<=180) {
+            var h0=50;
+            var R=100;
+            ePlanex=R*Math.sin(degree*(Math.PI/180));
+            ePlaney=R+h0+R*Math.cos(degree*(Math.PI/180));
+            img.css({
+                'transform':"rotate(-"+degree+"deg)",
+                'margin-left':ePlanex+'px',
+                'margin-top':ePlaney+'px'
+            });
+            degree+=2;
+            setTimeout(that.ePlaneRoute3,25);
+            }
+            else {
+                img.css('display','none');
+                img.remove();
+            }
+        }
+    }
+
+    function myePlane(){
+    var eP=new ePlane();
+    if(getRandom(1,3)==1)
+    	eP.createePlane1();
+    else if(getRandom(1,3)==2)
+   		eP.createePlane2();
+    else if(getRandom(1,3)==3)
+    	eP.createePlane3();
+    	setTimeout("myePlane()",2000);
+    }   
+    myePlane();
+    
+/********************************击毁、被击毁、碰撞、接收物品************************************/
+    function isFight(){
+        var bullet=$("#game .bullet");
+        var ePlane=$("#game .ePlane");
+        var plane=$("plane");
+        var icon=$(".icon");
+        //判断子弹与敌机是否发生碰撞
+        for(var i=0;i<bullet.length;i++){
+            var b_1=parseInt(bullet.eq(i).css("margin-left"));
+            var b_2=parseInt(bullet.eq(i).css("margin-top"));
+            var b_3=b_1+50;
+            var b_4=b_2+40;
+            for(var j=0;j<ePlane.length;j++){
+                var e_1=parseInt(ePlane.eq(j).css("margin-left"));
+                var e_2=parseInt(ePlane.eq(j).css("margin-top"));
+                var e_3=e_1+parseInt(ePlane.eq(j).css("width"));
+                var e_4=e_2+20;
+
+                if(isFourInIt(b_1,b_2,b_3,b_4,e_1,e_2,e_3,e_4)){
+                    ePlane.eq(j).css('display','none');
+                    ePlane.eq(j).remove();
+                    bullet.eq(i).css('display','none');
+                    bullet.eq(j).remove();
+                    score+=10;
+                    $("span")[1].innerHTML="score "+score;
+                }
+            }
+        }
+        	//判断飞机与敌机是否发生碰撞
+            var p_1=planex;
+            var p_2=planey;
+            var p_3=b_1+50;
+            var p_4=b_2+40;
+            for(var j=0;j<ePlane.length;j++){
+                var e_1=parseInt(ePlane.eq(j).css("margin-left"));
+                var e_2=parseInt(ePlane.eq(j).css("margin-top"));
+                var e_3=e_1+parseInt(ePlane.eq(j).css("width"));
+                var e_4=e_2+20;
+
+                if(isFourInIt(p_1,p_2,p_3,p_4,e_1,e_2,e_3,e_4)){
+                    if(life==3)
+                    {
+                        $('#life2').attr('src','css/img/life2.png');
+                        life--;
+                        bullet_grade=1;
+                        ePlane.eq(j).css('display','none');
+                        ePlane.eq(j).remove();
+                        shansuo(3);
+                    }
+                    else if(life==2)
+                    {
+                        $('#life1').attr('src','css/img/life2.png');
+                        life--;
+                        bullet_grade=1;
+                        ePlane.eq(j).css('display','none');
+                        ePlane.eq(j).remove();
+                        shansuo(3);
+                    }
+                    else if(life==1)
+                    {
+                        alert("You lost!");
+                        location.reload();
+                    }
+                }
+            }
+/******************************图标：升级子弹、飞机加速、子弹种类*****************************/
+    function icon(){
+        var that=this;
+        var iconx=0;
+        var icony=0;
+        var img=$(new Image());
+        this.createicon1=function(){//升级子弹
+            iconx=getRandom(1,250);//x随机
+            icony=getRandom(1,50);//y随机
+            img.attr({
+                'src':'css/img/bullet_up.png',
+                'class':'icon'
+            });
+            img.css({
+                'margin-left':iconx+'px',
+                'margin-top':icony+'px'
+            });
+            
+            $("#game").append(img);
+            this.iconRoute();
+        }
+        this.createicon2=function(){//飞机加速  
+            iconx=getRandom(1,250);//x随机
+            icony=getRandom(1,50);//y随机
+            img.attr({
+                'src':'css/img/plane_up.png',
+                'class':'icon'
+            });
+            img.css({
+                'margin-left':iconx+'px',
+                'margin-top':icony+'px'
+            });
+            
+            $("#game").append(img);
+            this.iconRoute();
+        }
+        this.iconRoute=function(){//icon的轨迹
+            if(icony<=465) {
+            img.css('margin-top',icony+'px');
+            icony+=3;
+            setTimeout(that.iconRoute,25);
+            }
+            else {
+                img.css('display','none');
+                img.remove();
+            }
+        }
+    }
+
+    function myIcon(){
+    var ic=new icon();
+    if(getRandom(1,3)==1)
+        ic.createicon1();
+    else if(getRandom(1,3)>=2)
+        ic.createicon2();
+    setTimeout("myIcon()",getRandom(10,13)*1000);
+    }
+    myIcon();
+            //icon图标时间
+            for(var j=0;j<icon.length;j++){
+                var i_1=parseInt(icon.css("margin-left"));
+                var i_2=parseInt(icon.css("margin-top"));
+                var i_3=i_1+40;
+                var i_4=i_2+40;
+
+                if(isFourInIt(i_1,i_2,i_3,i_4,p_1,p_2,p_3,p_4)){
+                	//子弹升级
+                    if(icon.attr('src')=='css/img/bullet_up.png')
+                    {
+                        if(bullet_grade==1)
+                        {
+                            bullet_grade++;  
+                        }
+                        else if(bullet_grade==2)
+                        {
+                            bullet_grade++;
+                        }
+                        icon.css('display','none');
+                        icon.remove();
+                    }
+                    //飞机加速
+                    else if(icon.attr('src')=='css/img/plane_up.png')
+                    {
+                        if(planev>=3&&planev<=5)
+                        {
+                            planev++;
+                        }
+                        icon.css('display','none');
+                        icon.remove();
+                    }
+                }
+            }
+        	setTimeout("isFight()",50);
+    	}
+    	isFight();
+    
+</script>
+</html>
